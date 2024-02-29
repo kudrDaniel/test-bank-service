@@ -38,7 +38,7 @@ class UserControllerTest {
 	public void beforeEach() {
 		testUser = new User();
 		userRepository.save(testUser);
-		token = SecurityMockMvcRequestPostProcessors.jwt().jwt(builder -> builder.subject(testUser.getEmail().get(0)));
+		token = SecurityMockMvcRequestPostProcessors.jwt().jwt(builder -> builder.subject(testUser.getEmails().get(0).getEmail()));
 	}
 
 	@Test
@@ -58,8 +58,8 @@ class UserControllerTest {
 		JsonAssertions.assertThatJson(resultContent).and(
 				v -> v.node("firstName").isEqualTo(newUser.getFullName()),
 				v -> v.node("birthDate").isEqualTo(newUser.getBirthDate()),
-				v -> v.node("email").isNotNull(),
-				v -> v.node("phoneNumber").isNotNull()
+				v -> v.node("emails").isNotNull(),
+				v -> v.node("phones").isNotNull()
 		);
 	}
 
