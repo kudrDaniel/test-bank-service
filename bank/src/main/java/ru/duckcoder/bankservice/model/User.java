@@ -1,11 +1,20 @@
 package ru.duckcoder.bankservice.model;
 
-import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.Range;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -13,6 +22,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -32,11 +42,11 @@ public class User implements UserDetails {
     @NotNull
     private LocalDate birthDate;
 
-    @NotEmpty
-    private List<@Email String> email;
+    @OneToMany(mappedBy = "email", cascade = CascadeType.MERGE)
+    private List<@Valid Email> emails = new ArrayList<>();
 
-    @NotEmpty
-    private List<String> number;
+    @OneToMany(mappedBy = "phone", cascade = CascadeType.MERGE)
+    private List<@Valid Phone> phones = new ArrayList<>();
 
     private String password;
 
@@ -57,7 +67,7 @@ public class User implements UserDetails {
 
     @Override
     public String getUsername() {
-        return this.email.get(0);
+        return this.emails.get(0).getEmail();
     }
 
     @Override
