@@ -29,4 +29,4 @@ jobs:
         java-version: '17'
         distribution: 'oracle'
     - name: Verify with Maven
-      run: ./bank/mvnw --batch-mode --update-snapshots verify
+      run: cd ./bank/ && mvn --batch-mode --update-snapshots verify
