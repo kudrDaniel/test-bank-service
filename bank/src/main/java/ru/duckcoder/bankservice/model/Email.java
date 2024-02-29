@@ -12,7 +12,7 @@ import lombok.Setter;
 public class Email {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
     @Column(unique = true)
     @jakarta.validation.constraints.Email

@@ -12,7 +12,7 @@ import org.hibernate.validator.constraints.Length;
 public class Phone {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
     @Column(unique = true)
     @Length(min = 8, max = 8)
