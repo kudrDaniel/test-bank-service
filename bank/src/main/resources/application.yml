@@ -1,0 +1,26 @@
+logging:
+  level:
+    root: INFO
+    org:
+      springframework:
+        # web: DEBUG
+        security: DEBUG
+
+spring:
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+  output:
+    ansi:
+      enabled: always
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:development}
+
+rsa:
+  public-key: classpath:certs/public.pem
+  private-key: classpath:certs/private.pem
+
+defauth:
+  email: ${ADMIN_EMAIL:hexlet@example.com}
+  password: ${ADMIN_PASS:qwerty}
