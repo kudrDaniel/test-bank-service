@@ -23,12 +23,12 @@ import ru.duckcoder.bankservice.service.UserService;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/users")
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
 
-    @GetMapping("")
+    @GetMapping("/")
     public ResponseEntity<List<UserDTO>> index(
             @RequestParam("page") Integer page,
             @RequestParam("size") Integer size
@@ -45,7 +45,7 @@ public class UserController {
         return userService.findById(id);
     }
 
-    @PostMapping("")
+    @PostMapping("/create")
     @ResponseStatus(HttpStatus.CREATED)
     public UserDTO create(@Valid @RequestBody UserCreateDTO dto) {
         return userService.create(dto);
