@@ -2,14 +2,24 @@ package ru.duckcoder.bankservice.controller.api;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
 import ru.duckcoder.bankservice.dto.UserCreateDTO;
 import ru.duckcoder.bankservice.dto.UserDTO;
 import ru.duckcoder.bankservice.dto.UserUpdateDTO;
 import ru.duckcoder.bankservice.service.UserService;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api")
@@ -18,13 +28,13 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping("")
-    public ResponseEntity<Page<UserDTO>> index(
+    public ResponseEntity<List<UserDTO>> index(
             @RequestParam("page") Integer page,
             @RequestParam("size") Integer size
     ) {
-        Page<UserDTO> users = userService.findAll(page, size);
+        List<UserDTO> users = userService.findAll(page, size);
         return ResponseEntity.ok()
-                .header("X-Total-Count", String.valueOf(users.getTotalElements()))
+                .header("X-Total-Count", String.valueOf(users.size()))
                 .body(users);
     }
 

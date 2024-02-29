@@ -2,7 +2,6 @@ package ru.duckcoder.bankservice.mapper;
 
 import org.mapstruct.BeforeMapping;
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;
@@ -22,9 +21,6 @@ public abstract class UserMapper {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    @Mapping(target = "emails.email", source = "email")
-    @Mapping(target = "phones.phone", source = "phone")
-    @Mapping(target = "wallet.deposit", source = "deposit")
     public abstract User map(UserCreateDTO dto);
 
     public abstract UserDTO map(User model);
