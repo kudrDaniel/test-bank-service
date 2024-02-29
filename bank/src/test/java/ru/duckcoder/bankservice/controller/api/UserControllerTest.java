@@ -12,8 +12,11 @@ import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequ
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.JwtRequestPostProcessor;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import ru.duckcoder.bankservice.model.User;
+import ru.duckcoder.bankservice.repository.UserRepository;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -35,14 +38,14 @@ class UserControllerTest {
 	public void beforeEach() {
 		testUser = new User();
 		userRepository.save(testUser);
-		token = SecurityMockMvcRequestPostProcessors.jwt().jwt(builder -> builder.subject(testUser.getEmail()));
+		token = SecurityMockMvcRequestPostProcessors.jwt().jwt(builder -> builder.subject(testUser.getEmail().get(0)));
 	}
 
 	@Test
 	public void userCreateTest() throws Exception {
 		User newUser = new User();
 
-		MockMvcRequestBuilders request = MockMvcRequestBuilders.post("/api/users")
+		MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post("/api/users")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(om.writeValueAsString(newUser));
 
@@ -53,9 +56,7 @@ class UserControllerTest {
 		String resultContent = result.getResponse().getContentAsString();
 
 		JsonAssertions.assertThatJson(resultContent).and(
-				v -> v.node("firstName").isEqualTo(newUser.getFirstName()),
-				v -> v.node("surName").isEqualTo(newUser.getSurName()),
-				v -> v.node("lastName").isEqualTo(newUser.getLastName()),
+				v -> v.node("firstName").isEqualTo(newUser.getFullName()),
 				v -> v.node("birthDate").isEqualTo(newUser.getBirthDate()),
 				v -> v.node("email").isNotNull(),
 				v -> v.node("phoneNumber").isNotNull()
