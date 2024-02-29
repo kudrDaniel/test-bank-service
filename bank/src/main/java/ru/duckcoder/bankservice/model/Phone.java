@@ -9,7 +9,7 @@ import org.hibernate.validator.constraints.Length;
 @Table(name = "phones")
 @Getter
 @Setter
-public class Phone {
+public class Phone implements Mappable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

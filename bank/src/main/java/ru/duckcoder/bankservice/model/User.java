@@ -31,7 +31,7 @@ import java.util.List;
 @EntityListeners(AuditingEntityListener.class)
 @Getter
 @Setter
-public class User implements UserDetails {
+public class User implements UserDetails, Mappable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

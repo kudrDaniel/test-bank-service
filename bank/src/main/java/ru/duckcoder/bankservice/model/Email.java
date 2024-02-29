@@ -9,7 +9,7 @@ import lombok.Setter;
 @Table(name = "emails")
 @Getter
 @Setter
-public class Email {
+public class Email implements Mappable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
