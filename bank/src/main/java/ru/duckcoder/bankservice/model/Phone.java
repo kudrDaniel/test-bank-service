@@ -15,7 +15,7 @@ public class Phone implements Mappable {
     private Long id;
 
     @Column(unique = true)
-    @Length(min = 8, max = 8)
+    @Length(min = 10, max = 10)
     private String phone;
 
     @ManyToOne(cascade = CascadeType.MERGE)
