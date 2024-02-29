@@ -1,7 +1,12 @@
 package ru.duckcoder.bankservice.mapper;
 
-import jakarta.persistence.EntityManager;
-import org.mapstruct.*;
+import org.mapstruct.BeforeMapping;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.MappingConstants;
+import org.mapstruct.MappingTarget;
+import org.mapstruct.NullValuePropertyMappingStrategy;
+import org.mapstruct.ReportingPolicy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import ru.duckcoder.bankservice.dto.UserCreateDTO;
