@@ -15,9 +15,6 @@ import ru.duckcoder.bankservice.model.User;
         unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public abstract class UserMapper {
     @Autowired
-    private EntityManager entityManager;
-
-    @Autowired
     private PasswordEncoder passwordEncoder;
 
     @Mapping(target = "emails.email", source = "email")
