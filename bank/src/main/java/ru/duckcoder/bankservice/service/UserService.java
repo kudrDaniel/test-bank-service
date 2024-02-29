@@ -1,5 +1,6 @@
 package ru.duckcoder.bankservice.service;
 
+import jakarta.validation.ConstraintViolationException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -8,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.duckcoder.bankservice.dto.UserCreateDTO;
 import ru.duckcoder.bankservice.dto.UserDTO;
+import ru.duckcoder.bankservice.dto.UserTransferDTO;
 import ru.duckcoder.bankservice.dto.UserUpdateDTO;
 import ru.duckcoder.bankservice.exception.ResourceAlreadyExistsException;
 import ru.duckcoder.bankservice.exception.ResourceNotFoundException;
@@ -103,6 +105,24 @@ public class UserService {
         mapper.update(dto, model);
         model = userRepository.save(model);
         return mapper.map(model);
+    }
+
+    @Transactional
+    public UserDTO transfer(Long id, UserTransferDTO dto) {
+        if (!Objects.equals(userUtils.getCurrentUser().getId(), id))
+            throw new AccessDeniedException("Access denied to update another user");
+        User senderModel = userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(User.class, "id", id));
+        User receiverModel = userRepository.findById(dto.getReceiverId())
+                .orElseThrow(() -> new ResourceNotFoundException(User.class, "id", dto.getReceiverId()));
+        if (senderModel.getWallet().removeFromDeposit(dto.getCount())) {
+            receiverModel.getWallet().addToDeposit(dto.getCount());
+            senderModel = userRepository.save(senderModel);
+            userRepository.save(receiverModel);
+        } else {
+            throw new AccessDeniedException("Balance cannot be");
+        }
+        return mapper.map(senderModel);
     }
 
     public void deleteById(Long id) {

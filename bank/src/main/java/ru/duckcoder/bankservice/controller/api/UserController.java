@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import ru.duckcoder.bankservice.dto.UserCreateDTO;
 import ru.duckcoder.bankservice.dto.UserDTO;
+import ru.duckcoder.bankservice.dto.UserTransferDTO;
 import ru.duckcoder.bankservice.dto.UserUpdateDTO;
 import ru.duckcoder.bankservice.service.UserService;
 
@@ -54,6 +55,12 @@ public class UserController {
     @ResponseStatus(HttpStatus.OK)
     public UserDTO update(@PathVariable Long id, @Valid @RequestBody UserUpdateDTO dto) {
         return userService.update(id, dto);
+    }
+
+    @PutMapping("/{id}/transfer")
+    @ResponseStatus(HttpStatus.OK)
+    public UserDTO transfer(@PathVariable Long id, @Valid @RequestBody UserTransferDTO dto) {
+        return userService.transfer(id, dto);
     }
 
     @DeleteMapping("/{id}")
