@@ -1,6 +1,5 @@
 package ru.duckcoder.bankservice.service;
 
-import jakarta.validation.ConstraintViolationException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -21,7 +20,6 @@ import ru.duckcoder.bankservice.model.Wallet;
 import ru.duckcoder.bankservice.repository.EmailRepository;
 import ru.duckcoder.bankservice.repository.PhoneRepository;
 import ru.duckcoder.bankservice.repository.UserRepository;
-import ru.duckcoder.bankservice.repository.WalletRepository;
 import ru.duckcoder.bankservice.util.UserUtils;
 
 import java.util.HashMap;
@@ -36,7 +34,6 @@ public class UserService {
     private final UserRepository userRepository;
     private final EmailRepository emailRepository;
     private final PhoneRepository phoneRepository;
-    private final WalletRepository walletRepository;
     private final UserMapper mapper;
     private final UserUtils userUtils;
 
@@ -54,7 +51,7 @@ public class UserService {
     }
 
     @Transactional
-    public UserDTO create(UserCreateDTO dto) {
+    public UserDTO create(UserCreateDTO dto){
         Map<String, String> violations = new HashMap<>();
         if (emailRepository.existsByEmail(dto.getEmail()))
             violations.put(dto.getEmail(), "email");
@@ -125,6 +122,7 @@ public class UserService {
         return mapper.map(senderModel);
     }
 
+    @Transactional
     public void deleteById(Long id) {
         if (!Objects.equals(userUtils.getCurrentUser().getId(), id))
             throw new AccessDeniedException("Access denied to update another user");
