@@ -12,6 +12,7 @@ import ru.duckcoder.bankservice.model.Wallet;
 import ru.duckcoder.bankservice.repository.EmailRepository;
 import ru.duckcoder.bankservice.repository.UserRepository;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Component
@@ -37,6 +38,7 @@ public class DataInitializer implements ApplicationRunner {
         defaultUser.setEmails(List.of(defaultEmail));
         defaultUser.setPhones(List.of(defaultPhone));
         defaultUser.setWallet(defaultWallet);
+        defaultUser.setBirthDate(LocalDate.of(1990, 10, 20));
         defaultUser.setPassword(passwordEncoder.encode("12345678"));
         userRepository.save(defaultUser);
     }
