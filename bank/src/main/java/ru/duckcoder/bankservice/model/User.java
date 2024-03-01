@@ -67,6 +67,8 @@ public class User implements UserDetails, Mappable {
 
     @Override
     public String getUsername() {
+        if (this.emails.isEmpty())
+            return null;
         return this.emails.get(0).getEmail();
     }
 

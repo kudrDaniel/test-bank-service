@@ -8,11 +8,15 @@ import lombok.Setter;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.Range;
 
+import java.time.LocalDate;
+
 @Getter
 @Setter
 public class UserCreateDTO {
     @Length(min = 5, max = 128)
     private String fullName;
+    @NotNull
+    private LocalDate birthDate;
     @Email
     private String email;
     @Range(min = 8, max = 64)
