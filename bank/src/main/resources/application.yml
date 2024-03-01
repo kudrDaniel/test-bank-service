@@ -11,6 +11,7 @@ spring:
     show-sql: true
     hibernate:
       ddl-auto: update
+      dialect: org.hibernate.dialect.PostgreSQL81Dialect
   output:
     ansi:
       enabled: always
@@ -20,7 +21,3 @@ spring:
 rsa:
   public-key: classpath:certs/public.pem
   private-key: classpath:certs/private.pem
-
-defauth:
-  email: ${ADMIN_EMAIL:hexlet@example.com}
-  password: ${ADMIN_PASS:qwerty}

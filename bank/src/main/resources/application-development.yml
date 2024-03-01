@@ -1,5 +1,6 @@
 spring:
   datasource:
-    url: "jdbc:h2:mem:app"
-    username: "app"
+    url: "jdbc:postgresql://localhost:5432/test_bank_service"
+    username: "username"
     password: "password"
+    driver-class-name: org.postgresql.Driver
