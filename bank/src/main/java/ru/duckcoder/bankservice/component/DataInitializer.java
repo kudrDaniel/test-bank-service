@@ -10,7 +10,9 @@ import ru.duckcoder.bankservice.model.Phone;
 import ru.duckcoder.bankservice.model.User;
 import ru.duckcoder.bankservice.model.Wallet;
 import ru.duckcoder.bankservice.repository.EmailRepository;
+import ru.duckcoder.bankservice.repository.PhoneRepository;
 import ru.duckcoder.bankservice.repository.UserRepository;
+import ru.duckcoder.bankservice.repository.WalletRepository;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -20,26 +22,50 @@ import java.util.List;
 public class DataInitializer implements ApplicationRunner {
     private final UserRepository userRepository;
     private final EmailRepository emailRepository;
+    private final PhoneRepository phoneRepository;
+    private final WalletRepository walletRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
-        User defaultUser = new User();
+        for (int i = 0; i < 5; i++) {
+            createUser(
+                    "Test User " + i,
+                    i + "1234567",
+                    LocalDate.of(1980, 1, 1 + i),
+                    "testUser" + i + "@example.com",
+                    "987654321" + i,
+                    (1 + i) * 100.0
+            );
+        }
+    }
+
+    private void createUser(String fullName, String password, LocalDate birthDate, String email, String phone, Double deposit) {
         Email defaultEmail = new Email();
-        defaultEmail.setEmail("johnSmith@example.com");
-        if (emailRepository.existsByEmail(defaultEmail.getEmail())) {
+        if (emailRepository.existsByEmail(email)) {
             return;
         }
+        defaultEmail.setEmail(email);
         Phone defaultPhone = new Phone();
-        defaultPhone.setPhone("9876543210");
+        if (phoneRepository.existsByPhone(phone)) {
+            return;
+        }
+        defaultPhone.setPhone(phone);
         Wallet defaultWallet = new Wallet();
-        defaultWallet.setDeposit(100.0);
-        defaultUser.setFullName("Smith John Johnson");
+        defaultWallet.setDeposit(deposit);
+        User defaultUser = new User();
+        defaultUser.setFullName(fullName);
         defaultUser.setEmails(List.of(defaultEmail));
         defaultUser.setPhones(List.of(defaultPhone));
         defaultUser.setWallet(defaultWallet);
-        defaultUser.setBirthDate(LocalDate.of(1990, 10, 20));
-        defaultUser.setPassword(passwordEncoder.encode("12345678"));
+        defaultUser.setBirthDate(birthDate);
+        defaultUser.setPassword(passwordEncoder.encode(password));
         userRepository.save(defaultUser);
+        defaultEmail.setUser(defaultUser);
+        emailRepository.save(defaultEmail);
+        defaultPhone.setUser(defaultUser);
+        phoneRepository.save(defaultPhone);
+        defaultWallet.setUser(defaultUser);
+        walletRepository.save(defaultWallet);
     }
 }

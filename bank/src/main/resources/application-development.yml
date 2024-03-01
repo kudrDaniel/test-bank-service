@@ -1,5 +1,6 @@
 spring:
   datasource:
+#    url: "jdbc:h2:mem:test_bank_service"
     url: "jdbc:postgresql://localhost:5432/test_bank_service"
     username: "username"
     password: "password"

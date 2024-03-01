@@ -1,15 +1,6 @@
 package ru.duckcoder.bankservice.model;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EntityListeners;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
@@ -42,16 +33,15 @@ public class User implements UserDetails, Mappable {
     @NotNull
     private LocalDate birthDate;
 
-    @OneToMany(mappedBy = "email", cascade = CascadeType.MERGE)
-    private List<@Valid Email> emails = new ArrayList<>();
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private List<Email> emails = new ArrayList<>();
 
-    @OneToMany(mappedBy = "phone", cascade = CascadeType.MERGE)
-    private List<@Valid Phone> phones = new ArrayList<>();
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private List<Phone> phones = new ArrayList<>();
 
     private String password;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "wallet_id", referencedColumnName = "id")
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Wallet wallet;
 
     @CreatedDate

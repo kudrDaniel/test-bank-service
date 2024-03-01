@@ -1,4 +1,4 @@
-package ru.duckcoder.bankservice.dto;
+package ru.duckcoder.bankservice.dto.user;
 
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Email;

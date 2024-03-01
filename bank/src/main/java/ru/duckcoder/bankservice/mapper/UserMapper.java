@@ -3,9 +3,9 @@ package ru.duckcoder.bankservice.mapper;
 import org.mapstruct.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import ru.duckcoder.bankservice.dto.UserCreateDTO;
-import ru.duckcoder.bankservice.dto.UserDTO;
-import ru.duckcoder.bankservice.dto.UserUpdateDTO;
+import ru.duckcoder.bankservice.dto.user.UserCreateDTO;
+import ru.duckcoder.bankservice.dto.user.UserDTO;
+import ru.duckcoder.bankservice.dto.user.UserUpdateDTO;
 import ru.duckcoder.bankservice.model.User;
 
 @Mapper(uses = {JsonNullableMapper.class, ReferenceMapper.class},
