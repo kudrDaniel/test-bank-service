@@ -1,5 +1,7 @@
 package ru.duckcoder.bankservice.controller.api;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -16,12 +18,15 @@ import ru.duckcoder.bankservice.dto.phone.PhoneDTO;
 import ru.duckcoder.bankservice.dto.phone.PhoneUpdateDTO;
 import ru.duckcoder.bankservice.service.PhoneService;
 
+@Tag(name = "Phones", description = "The User API")
 @RestController
 @RequestMapping("/api/users")
 @RequiredArgsConstructor
 public class PhoneController {
     private final PhoneService phoneService;
 
+
+    @SecurityRequirement(name = "Bearer Authentication")
     @PostMapping("/{userId}/phones")
     @ResponseStatus(HttpStatus.CREATED)
     public PhoneDTO create(
@@ -30,6 +35,8 @@ public class PhoneController {
         return phoneService.createWithUserId(dto, userId);
     }
 
+
+    @SecurityRequirement(name = "Bearer Authentication")
     @PutMapping("/{userId}/phones/{id}")
     @ResponseStatus(HttpStatus.OK)
     public PhoneDTO update(
@@ -39,6 +46,8 @@ public class PhoneController {
         return phoneService.updateByIdWithUserId(id, dto, userId);
     }
 
+
+    @SecurityRequirement(name = "Bearer Authentication")
     @DeleteMapping("/{userId}/phones/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable Long id, @PathVariable Long userId) {

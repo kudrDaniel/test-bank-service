@@ -18,6 +18,7 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import ru.duckcoder.bankservice.dto.email.EmailCreateDTO;
+import ru.duckcoder.bankservice.dto.email.EmailUpdateDTO;
 import ru.duckcoder.bankservice.model.Email;
 import ru.duckcoder.bankservice.model.Phone;
 import ru.duckcoder.bankservice.model.User;
@@ -164,8 +165,7 @@ public class EmailControllerTest {
                 .content(om.writeValueAsString(dto));
 
         mockMvc.perform(request)
-                .andExpect(MockMvcResultMatchers.status().isUnauthorized())
-                .andReturn();
+                .andExpect(MockMvcResultMatchers.status().isUnauthorized());
     }
 
     @Test
@@ -179,22 +179,97 @@ public class EmailControllerTest {
                 .content(om.writeValueAsString(dto));
 
         mockMvc.perform(request)
-                .andExpect(MockMvcResultMatchers.status().isConflict())
+                .andExpect(MockMvcResultMatchers.status().isConflict());
+    }
+
+    @Test
+    public void emailUpdateTestSuccess() throws Exception {
+        EmailUpdateDTO dto = new EmailUpdateDTO();
+        dto.setEmail("testEmail@email.ru");
+
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.put("/api/users/{userId}/emails/{id}", testUser0.getId(), testEmail0.getId())
+                .with(token0)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(om.writeValueAsString(dto));
+
+        MvcResult result = mockMvc.perform(request)
+                .andExpect(MockMvcResultMatchers.status().isOk())
                 .andReturn();
+
+        JsonAssertions.assertThatJson(result.getResponse().getContentAsString()).and(
+                v -> v.node("email").isEqualTo(dto.getEmail())
+        );
+
+        Optional<Email> repositoryResult = emailRepository.findByEmail(dto.getEmail());
+        Assertions.assertThat(repositoryResult).isNotEmpty();
+        Email actualModel = repositoryResult.get();
+        Assertions.assertThat(actualModel.getEmail()).isEqualTo(dto.getEmail());
+        Assertions.assertThat(actualModel.getUser().getId()).isEqualTo(testUser0.getId());
     }
 
     @Test
-    public void emailUpdateTestSuccess() {
+    public void emailUpdateTestWrongUser() throws Exception {
+        EmailUpdateDTO dto = new EmailUpdateDTO();
+        dto.setEmail("12testEmail@email.com");
 
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.put("/api/users/{userId}/emails/{id}", testUser0.getId(), testEmail0.getId())
+                .with(token1)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(om.writeValueAsString(dto));
+
+        mockMvc.perform(request)
+                .andExpect(MockMvcResultMatchers.status().isUnauthorized());
     }
 
     @Test
-    public void emailUpdateTestWrongUser() {
+    public void emailUpdateTestConflict() throws Exception {
+        EmailUpdateDTO dto = new EmailUpdateDTO();
+        dto.setEmail("1testEmail@email.com");
 
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.put("/api/users/{userId}/emails/{id}", testUser0.getId(), testEmail0.getId())
+                .with(token0)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(om.writeValueAsString(dto));
+
+        mockMvc.perform(request)
+                .andExpect(MockMvcResultMatchers.status().isConflict());
     }
 
     @Test
-    public void emailUpdateTestConflict() {
+    public void emailDeleteTestSuccess() throws Exception {
+        Email tmpEmail = new Email();
+        tmpEmail.setEmail("opl@asd.asd");
+        tmpEmail.setUser(testUser0);
+        emailRepository.save(tmpEmail);
 
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.delete("/api/users/{userId}/emails/{id}", testUser0.getId(), tmpEmail.getId())
+                .with(token0);
+
+        mockMvc.perform(request)
+                .andExpect(MockMvcResultMatchers.status().isNoContent());
+
+        Assertions.assertThat(emailRepository.existsByEmail(tmpEmail.getEmail())).isFalse();
+    }
+
+    @Test
+    public void emailDeleteTestWrongUser() throws Exception {
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.delete("/api/users/{userId}/emails/{id}", testUser0.getId(), testEmail1.getId())
+                .with(token0);
+
+        mockMvc.perform(request)
+                .andExpect(MockMvcResultMatchers.status().isUnauthorized());
+
+        Assertions.assertThat(emailRepository.existsByEmail(testEmail1.getEmail())).isTrue();
+    }
+
+    @Test
+    public void emailDeleteTestConflict() throws Exception {
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.delete("/api/users/{userId}/emails/{id}", testUser0.getId(), testEmail0.getId())
+                .with(token0);
+
+        mockMvc.perform(request)
+                .andExpect(MockMvcResultMatchers.status().isConflict());
+
+        Assertions.assertThat(emailRepository.existsByEmail(testEmail0.getEmail())).isTrue();
     }
 }

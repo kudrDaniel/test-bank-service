@@ -3,7 +3,6 @@ package ru.duckcoder.bankservice.config;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -24,7 +23,7 @@ import ru.duckcoder.bankservice.service.UserDetailServiceImpl;
 @EnableWebSecurity
 @EnableMethodSecurity
 @RequiredArgsConstructor
-public class SecurityConfig {
+public class SecurityConfiguration {
     private final JwtDecoder jwtDecoder;
     private final PasswordEncoder passwordEncoder;
     private final UserDetailServiceImpl userDetailService;
@@ -34,6 +33,8 @@ public class SecurityConfig {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/swagger-ui/**").permitAll()
+                        .requestMatchers("/v3/api-docs/**").permitAll()
                         .requestMatchers("/api/users").permitAll()
                         .requestMatchers("/api/login").permitAll()
                         .anyRequest().authenticated())

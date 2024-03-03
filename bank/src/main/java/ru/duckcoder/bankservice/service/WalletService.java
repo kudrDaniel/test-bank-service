@@ -21,8 +21,16 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class WalletService {
     private final WalletRepository walletRepository;
-    private final WalletMapper walletMapper;
+    private final WalletMapper mapper;
     private final UserUtils userUtils;
+
+    public WalletDTO findByUserId(Long id) {
+        if (!Objects.equals(userUtils.getCurrentUser().getId(), id))
+            throw new AccessDeniedException("Access denied for seeing from another user");
+        Wallet model = walletRepository.findByUserId(id)
+                .orElseThrow(() -> new ResourceNotFoundException(Wallet.class, "userId", id));
+        return mapper.map(model);
+    }
 
     @Transactional
     public WalletDTO transfer(Long senderId, WalletTransferDTO dto) {
@@ -37,19 +45,20 @@ public class WalletService {
             receiverWallet.addToDeposit(dto.getCount());
         } else
             throw new NoSuchElementException("Deposit cannot be below zero");
-
-        walletRepository.save(senderWallet);
-        walletRepository.save(receiverWallet);
-
-        return walletMapper.map(senderWallet);
+        return mapper.map(senderWallet);
     }
 
     @Scheduled(fixedDelay = 60000L)
-    @Transactional
     public void updateAccrual() {
         List<Wallet> walletModels = walletRepository.findAll();
         for (Wallet walletModel : walletModels) {
-            walletModel.changeAccrual();
+            accrualTransaction(walletModel);
         }
+    }
+
+    @Transactional
+    public void accrualTransaction(Wallet model) {
+        model.changeAccrual();
+        walletRepository.save(model);
     }
 }

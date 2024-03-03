@@ -1,5 +1,7 @@
 package ru.duckcoder.bankservice.controller.api;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -16,12 +18,15 @@ import ru.duckcoder.bankservice.dto.email.EmailDTO;
 import ru.duckcoder.bankservice.dto.email.EmailUpdateDTO;
 import ru.duckcoder.bankservice.service.EmailService;
 
+@Tag(name = "Emails", description = "The Email API")
 @RestController
 @RequestMapping("/api/users")
 @RequiredArgsConstructor
 public class EmailController {
     private final EmailService emailService;
 
+
+    @SecurityRequirement(name = "Bearer Authentication")
     @PostMapping("/{userId}/emails")
     @ResponseStatus(HttpStatus.CREATED)
     public EmailDTO create(
@@ -30,6 +35,8 @@ public class EmailController {
         return emailService.createWithUserId(dto, userId);
     }
 
+
+    @SecurityRequirement(name = "Bearer Authentication")
     @PutMapping("/{userId}/emails/{id}")
     @ResponseStatus(HttpStatus.OK)
     public EmailDTO update(
@@ -39,6 +46,8 @@ public class EmailController {
         return emailService.updateByIdWithUserId(id, dto, userId);
     }
 
+
+    @SecurityRequirement(name = "Bearer Authentication")
     @DeleteMapping("/{userId}/emails/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(

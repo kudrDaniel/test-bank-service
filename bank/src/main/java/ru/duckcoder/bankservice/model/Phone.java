@@ -1,5 +1,7 @@
 package ru.duckcoder.bankservice.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -26,7 +28,8 @@ public class Phone implements Mappable {
     @Length(min = 10, max = 10)
     private String phone;
 
-    @ManyToOne
+    @JsonIgnore
+    @ManyToOne(cascade = CascadeType.MERGE)
     private User user;
 
     @Override

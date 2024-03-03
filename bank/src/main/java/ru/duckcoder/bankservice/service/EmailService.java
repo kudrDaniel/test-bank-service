@@ -25,7 +25,7 @@ import java.util.Objects;
 public class EmailService {
     private final EmailRepository emailRepository;
     private final UserRepository userRepository;
-    private final EmailMapper emailMapper;
+    private final EmailMapper mapper;
     private final UserUtils userUtils;
 
     @Transactional
@@ -36,28 +36,31 @@ public class EmailService {
             throw new ResourceAlreadyExistsException(Email.class, Map.of(dto.getEmail(), "email"));
         User userModel = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException(User.class, "id", userId));
-        Email emailModel = emailMapper.map(dto);
-        emailModel.setUser(userModel);
+        Email emailModel = mapper.map(dto);
         emailRepository.save(emailModel);
-        return emailMapper.map(emailModel);
+        emailModel.setUser(userModel);
+        return mapper.map(emailModel);
     }
 
     @Transactional
     public EmailDTO updateByIdWithUserId(Long id, EmailUpdateDTO dto, Long userId) {
-        if (!Objects.equals(userUtils.getCurrentUser().getId(), userId))
+        Email emailModel = emailRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(Email.class, "id", id));
+        if (!Objects.equals(userUtils.getCurrentUser().getId(), userId)
+                || !Objects.equals(emailModel.getUser().getId(), userId))
             throw new AccessDeniedException("Access denied to update email by another user");
         if (emailRepository.existsByEmail(dto.getEmail()))
             throw new ResourceAlreadyExistsException(Email.class, Map.of(dto.getEmail(), "email"));
-        Email emailModel = emailRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(Email.class, "email", dto.getEmail()));
-        emailMapper.update(dto, emailModel);
-        emailRepository.save(emailModel);
-        return emailMapper.map(emailModel);
+        mapper.update(dto, emailModel);
+        return mapper.map(emailModel);
     }
 
     @Transactional
     public void deleteByIdWithUserId(Long id, Long userId) {
-        if (!Objects.equals(userUtils.getCurrentUser().getId(), userId))
+        Email emailModel = emailRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(Email.class, "id", id));
+        if (!Objects.equals(userUtils.getCurrentUser().getId(), userId)
+                || !Objects.equals(emailModel.getUser().getId(), userId))
             throw new AccessDeniedException("Access denied to delete email by another user");
         if (emailRepository.countByUserId(userId) > 1)
             emailRepository.deleteById(id);

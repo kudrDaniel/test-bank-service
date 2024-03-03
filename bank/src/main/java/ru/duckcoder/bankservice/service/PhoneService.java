@@ -25,7 +25,7 @@ import java.util.Objects;
 public class PhoneService {
     private final PhoneRepository phoneRepository;
     private final UserRepository userRepository;
-    private final PhoneMapper phoneMapper;
+    private final PhoneMapper mapper;
     private final UserUtils userUtils;
 
     @Transactional
@@ -36,29 +36,32 @@ public class PhoneService {
             throw new ResourceAlreadyExistsException(Phone.class, Map.of(dto.getPhone(), "phone"));
         User userModel = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException(User.class, "id", userId));
-        Phone phoneModel = phoneMapper.map(dto);
-        phoneModel.setUser(userModel);
+        Phone phoneModel = mapper.map(dto);
         phoneRepository.save(phoneModel);
-        return phoneMapper.map(phoneModel);
+        phoneModel.setUser(userModel);
+        return mapper.map(phoneModel);
     }
 
     @Transactional
     public PhoneDTO updateByIdWithUserId(Long id, PhoneUpdateDTO dto, Long userId) {
-        if (!Objects.equals(userUtils.getCurrentUser().getId(), userId))
+        Phone phoneModel = phoneRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(Phone.class, "id", id));
+        if (!Objects.equals(userUtils.getCurrentUser().getId(), userId)
+                || !Objects.equals(phoneModel.getUser().getId(), userId))
             throw new AccessDeniedException("Access denied to update phone by another user");
         if (phoneRepository.existsByPhone(dto.getPhone()))
             throw new ResourceAlreadyExistsException(Phone.class, Map.of(dto.getPhone(), "phone"));
-        Phone phoneModel = phoneRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(Phone.class, "phone", dto.getPhone()));
-        phoneMapper.update(dto, phoneModel);
-        phoneRepository.save(phoneModel);
-        return phoneMapper.map(phoneModel);
+        mapper.update(dto, phoneModel);
+        return mapper.map(phoneModel);
     }
 
     @Transactional
     public void deleteByIdWithUserId(Long id, Long userId) {
-        if (!Objects.equals(userUtils.getCurrentUser().getId(), userId))
-            throw new AccessDeniedException("Access denied to delete phone by another user");
+        Phone phoneModel = phoneRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(Phone.class, "id", id));
+        if (!Objects.equals(userUtils.getCurrentUser().getId(), userId)
+                || !Objects.equals(phoneModel.getUser().getId(), userId))
+            throw new AccessDeniedException("Access denied to update phone by another user");
         if (phoneRepository.countByUserId(userId) > 1)
             phoneRepository.deleteById(id);
         else

@@ -1,5 +1,7 @@
 package ru.duckcoder.bankservice.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -25,7 +27,8 @@ public class Email implements Mappable {
     @jakarta.validation.constraints.Email
     private String email;
 
-    @ManyToOne
+    @JsonIgnore
+    @ManyToOne(cascade = CascadeType.MERGE)
     private User user;
 
     @Override

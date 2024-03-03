@@ -34,12 +34,11 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
-    private final UserSpecification userSpecification;
     private final EmailRepository emailRepository;
     private final PhoneRepository phoneRepository;
-    private final WalletRepository walletRepository;
     private final UserMapper mapper;
     private final UserUtils userUtils;
+    private final UserSpecification userSpecification;
 
     public List<UserDTO> findAll(Integer page, Integer size, String[] orderBy, String direction, UserParamsDTO params) {
         if (page == null || page < 0)
@@ -47,6 +46,13 @@ public class UserService {
         if (size == null || size < 0)
             size = Integer.MAX_VALUE;
         Sort sort = buildSort(direction, orderBy);
+        if (params == null) {
+            params = new UserParamsDTO();
+            params.setEmail(null);
+            params.setPhone(null);
+            params.setBirthDate(null);
+            params.setFullName(null);
+        }
         Specification<User> specification = userSpecification.build(params);
         Page<User> models = userRepository.findAll(specification, PageRequest.of(page, size, sort));
         return models.stream()
@@ -79,13 +85,9 @@ public class UserService {
         Wallet wallet = new Wallet();
         wallet.setDeposit(dto.getDeposit());
         model.setWallet(wallet);
-        userRepository.save(model);
         email.setUser(model);
-        emailRepository.save(email);
         phone.setUser(model);
-        phoneRepository.save(phone);
         wallet.setUser(model);
-        walletRepository.save(wallet);
         return mapper.map(model);
     }
 

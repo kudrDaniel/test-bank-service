@@ -19,7 +19,7 @@ import ru.duckcoder.bankservice.component.RsaKeyProperties;
 
 @Configuration
 @RequiredArgsConstructor
-public class EncodersConfig {
+public class EncodersConfiguration {
     private final RsaKeyProperties rsaKeys;
 
     @Bean

@@ -28,16 +28,17 @@ public class Wallet implements Mappable {
 
     private Double accrual = 0.0;
 
+    @JsonIgnore
     @OneToOne
     private User user;
 
     public Double getBalance() {
-        return deposit + accrual;
+        return this.deposit + this.accrual;
     }
 
     public void changeAccrual() {
-        if (this.getBalance() * 0.05 < deposit * 2.07) {
-            accrual = getBalance() * 0.05;
+        if (this.getBalance() * 1.05 <= this.deposit * 2.07) {
+            this.accrual += this.getBalance() * 0.05;
         }
     }
 

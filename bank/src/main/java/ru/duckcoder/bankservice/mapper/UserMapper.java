@@ -1,11 +1,14 @@
 package ru.duckcoder.bankservice.mapper;
 
-import org.mapstruct.*;
+import org.mapstruct.BeforeMapping;
+import org.mapstruct.Mapper;
+import org.mapstruct.MappingConstants;
+import org.mapstruct.NullValuePropertyMappingStrategy;
+import org.mapstruct.ReportingPolicy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import ru.duckcoder.bankservice.dto.user.UserCreateDTO;
 import ru.duckcoder.bankservice.dto.user.UserDTO;
-import ru.duckcoder.bankservice.dto.user.UserUpdateDTO;
 import ru.duckcoder.bankservice.model.User;
 
 @Mapper(uses = {JsonNullableMapper.class, ReferenceMapper.class},
@@ -19,8 +22,6 @@ public abstract class UserMapper {
     public abstract User map(UserCreateDTO dto);
 
     public abstract UserDTO map(User model);
-
-    public abstract void update(UserUpdateDTO dto, @MappingTarget User model);
 
     @BeforeMapping
     public void encryptPassword(UserCreateDTO dto) {
