@@ -11,7 +11,7 @@ import ru.duckcoder.bankservice.dto.user.UserCreateDTO;
 import ru.duckcoder.bankservice.dto.user.UserDTO;
 import ru.duckcoder.bankservice.model.User;
 
-@Mapper(uses = {JsonNullableMapper.class, ReferenceMapper.class},
+@Mapper(uses = ReferenceMapper.class,
         nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
         componentModel = MappingConstants.ComponentModel.SPRING,
         unmappedTargetPolicy = ReportingPolicy.IGNORE)

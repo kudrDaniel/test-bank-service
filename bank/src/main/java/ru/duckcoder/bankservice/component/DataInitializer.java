@@ -27,10 +27,11 @@ public class DataInitializer implements ApplicationRunner {
     private final PasswordEncoder passwordEncoder;
 
     @Override
-    public void run(ApplicationArguments args) throws Exception {
+    public void run(ApplicationArguments args) {
         for (int i = 0; i < 5; i++) {
             createUser(
                     "Test User " + i,
+                    "initUser" + i,
                     i + "1234567",
                     LocalDate.of(1980, 1, 1 + i),
                     "testUser" + i + "@example.com",
@@ -40,7 +41,9 @@ public class DataInitializer implements ApplicationRunner {
         }
     }
 
-    private void createUser(String fullName, String password, LocalDate birthDate, String email, String phone, Double deposit) {
+    private void createUser(String fullName, String username, String password, LocalDate birthDate, String email, String phone, Double deposit) {
+        if (userRepository.existsByUsername(username))
+            return;
         Email defaultEmail = new Email();
         if (emailRepository.existsByEmail(email)) {
             return;
@@ -55,6 +58,7 @@ public class DataInitializer implements ApplicationRunner {
         defaultWallet.setDeposit(deposit);
         User defaultUser = new User();
         defaultUser.setFullName(fullName);
+        defaultUser.setUsername(username);
         defaultUser.setEmails(List.of(defaultEmail));
         defaultUser.setPhones(List.of(defaultPhone));
         defaultUser.setWallet(defaultWallet);

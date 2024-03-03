@@ -9,5 +9,6 @@ import lombok.Setter;
 public class AuthDTO {
     @NotBlank
     private String username;
+    @NotBlank
     private String password;
 }

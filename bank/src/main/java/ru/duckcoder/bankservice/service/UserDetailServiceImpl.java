@@ -6,31 +6,22 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.stereotype.Service;
-import ru.duckcoder.bankservice.model.Email;
 import ru.duckcoder.bankservice.model.User;
-import ru.duckcoder.bankservice.repository.EmailRepository;
 import ru.duckcoder.bankservice.repository.UserRepository;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class UserDetailServiceImpl implements UserDetailsManager {
     private final UserRepository userRepository;
-    private final EmailRepository emailRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Override
     public void createUser(UserDetails details) {
-        Email email = new Email();
-        email.setEmail(details.getUsername());
         User user = new User();
-        user.setEmails(List.of(email));
+        user.setUsername(details.getUsername());
         String encodedPassword = passwordEncoder.encode(details.getPassword());
         user.setPassword(encodedPassword);
-        user = userRepository.save(user);
-        email.setUser(user);
-        emailRepository.save(email);
+        userRepository.save(user);
     }
 
     @Override
@@ -39,7 +30,7 @@ public class UserDetailServiceImpl implements UserDetailsManager {
     }
 
     @Override
-    public void deleteUser(String email) {
+    public void deleteUser(String username) {
 
     }
 
@@ -49,13 +40,13 @@ public class UserDetailServiceImpl implements UserDetailsManager {
     }
 
     @Override
-    public boolean userExists(String email) {
-        return emailRepository.existsByEmail(email);
+    public boolean userExists(String username) {
+        return userRepository.existsByUsername(username);
     }
 
     @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        return emailRepository.findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found")).getUser();
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
     }
 }

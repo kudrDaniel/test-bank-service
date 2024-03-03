@@ -21,7 +21,6 @@ import ru.duckcoder.bankservice.model.Wallet;
 import ru.duckcoder.bankservice.repository.EmailRepository;
 import ru.duckcoder.bankservice.repository.PhoneRepository;
 import ru.duckcoder.bankservice.repository.UserRepository;
-import ru.duckcoder.bankservice.repository.WalletRepository;
 import ru.duckcoder.bankservice.specification.UserSpecification;
 import ru.duckcoder.bankservice.util.UserUtils;
 
@@ -40,11 +39,11 @@ public class UserService {
     private final UserUtils userUtils;
     private final UserSpecification userSpecification;
 
-    public List<UserDTO> findAll(Integer page, Integer size, String[] orderBy, String direction, UserParamsDTO params) {
-        if (page == null || page < 0)
-            page = 0;
-        if (size == null || size < 0)
-            size = Integer.MAX_VALUE;
+    public Page<UserDTO> findAll(UserParamsDTO params, Integer page, Integer size, String[] orderBy, String direction) {
+        if (page < 1)
+            page = 1;
+        if (size < 1)
+            size = 10;
         Sort sort = buildSort(direction, orderBy);
         if (params == null) {
             params = new UserParamsDTO();
@@ -54,10 +53,8 @@ public class UserService {
             params.setFullName(null);
         }
         Specification<User> specification = userSpecification.build(params);
-        Page<User> models = userRepository.findAll(specification, PageRequest.of(page, size, sort));
-        return models.stream()
-                .map(mapper::map)
-                .toList();
+        Page<User> models = userRepository.findAll(specification, PageRequest.of(page - 1, size, sort));
+        return models.map(mapper::map);
     }
 
     public UserDTO findById(Long id) {
@@ -90,6 +87,7 @@ public class UserService {
         email.setUser(model);
         phone.setUser(model);
         wallet.setUser(model);
+        userRepository.save(model);
         return mapper.map(model);
     }
 

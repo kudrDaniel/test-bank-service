@@ -37,8 +37,8 @@ public class PhoneService {
         User userModel = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException(User.class, "id", userId));
         Phone phoneModel = mapper.map(dto);
-        phoneRepository.save(phoneModel);
         phoneModel.setUser(userModel);
+        phoneRepository.save(phoneModel);
         return mapper.map(phoneModel);
     }
 

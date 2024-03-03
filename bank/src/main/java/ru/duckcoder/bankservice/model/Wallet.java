@@ -8,6 +8,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.DecimalMin;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -24,8 +25,10 @@ public class Wallet implements Mappable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @DecimalMin("0.0")
     private Double deposit;
 
+    @DecimalMin("0.0")
     private Double accrual = 0.0;
 
     @JsonIgnore

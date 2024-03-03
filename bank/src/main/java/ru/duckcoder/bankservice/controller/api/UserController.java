@@ -46,12 +46,12 @@ public class UserController {
     @GetMapping("/")
     @ResponseStatus(HttpStatus.OK)
     public List<UserDTO> index(
-            @RequestParam(name = "page", required = false) Integer page,
-            @RequestParam(name = "size", required = false) Integer size,
+            UserParamsDTO params,
+            @RequestParam(name = "page", required = false, defaultValue = "1") Integer page,
+            @RequestParam(name = "size", required = false, defaultValue = "10") Integer size,
             @RequestParam(name = "direction", required = false) String direction,
-            @RequestParam(name = "orderBy", required = false) String[] orderBy,
-            @RequestParam(name = "params", required = false) UserParamsDTO params) {
-        return userService.findAll(page, size, orderBy, direction, params);
+            @RequestParam(name = "orderBy", required = false) String[] orderBy) {
+        return userService.findAll(params, page, size, orderBy, direction).toList();
     }
 
     @Operation(summary = "Returns user by id", description = "Get user by id")

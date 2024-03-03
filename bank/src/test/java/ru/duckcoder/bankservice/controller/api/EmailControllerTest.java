@@ -66,12 +66,15 @@ public class EmailControllerTest {
     @BeforeEach
     public void beforeEach() {
         String fullName = "Test User ";
+        String username = "testUser";
         String password = "01234567";
         LocalDate birthDate = LocalDate.of(1980, 5, 20);
         String email = "testEmail@email.com";
         String phone = "912345678";
         double deposit = 1000.0;
 
+        if (userRepository.existsByUsername(username + 0) || userRepository.existsByUsername(username + 1))
+            return;
         testEmail0 = new Email();
         testEmail1 = new Email();
         if (emailRepository.existsByEmail(email + 0) || emailRepository.existsByEmail(email + 1)) {
@@ -94,6 +97,8 @@ public class EmailControllerTest {
         testUser1 = new User();
         testUser0.setFullName(fullName + 0);
         testUser1.setFullName(fullName + 1);
+        testUser0.setUsername(username + 0);
+        testUser1.setUsername(username + 1);
         testUser0.setEmails(List.of(testEmail0));
         testUser1.setEmails(List.of(testEmail1));
         testUser0.setPhones(List.of(testPhone0));
@@ -119,8 +124,8 @@ public class EmailControllerTest {
         walletRepository.save(testWallet0);
         walletRepository.save(testWallet1);
 
-        token0 = jwt().jwt(builder -> builder.subject(testEmail0.getEmail()));
-        token1 = jwt().jwt(builder -> builder.subject(testEmail1.getEmail()));
+        token0 = jwt().jwt(builder -> builder.subject(testUser0.getUsername()));
+        token1 = jwt().jwt(builder -> builder.subject(testUser1.getUsername()));
     }
 
     @AfterEach

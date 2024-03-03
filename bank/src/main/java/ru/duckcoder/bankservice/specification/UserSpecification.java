@@ -29,7 +29,7 @@ public class UserSpecification {
     private Specification<User> withFullNameLike(String fullName) {
         return (r, q, cb) -> fullName == null
                 ? cb.conjunction()
-                : cb.like(r.get("fullName"), fullName);
+                : cb.like(r.get("fullName"), '%' + fullName + '%');
     }
 
     private Specification<User> withEmail(String email) {

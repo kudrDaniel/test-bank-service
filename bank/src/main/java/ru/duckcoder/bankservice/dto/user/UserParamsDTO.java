@@ -1,7 +1,9 @@
 package ru.duckcoder.bankservice.dto.user;
 
+import jakarta.validation.constraints.Email;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.validator.constraints.Length;
 
 import java.time.LocalDate;
 
@@ -9,7 +11,9 @@ import java.time.LocalDate;
 @Setter
 public class UserParamsDTO {
     private String fullName;
+    @Email
     private String email;
+    @Length(min = 10, max = 10)
     private String phone;
     private LocalDate birthDate;
 }

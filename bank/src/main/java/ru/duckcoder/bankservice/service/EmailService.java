@@ -37,8 +37,8 @@ public class EmailService {
         User userModel = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException(User.class, "id", userId));
         Email emailModel = mapper.map(dto);
-        emailRepository.save(emailModel);
         emailModel.setUser(userModel);
+        emailRepository.save(emailModel);
         return mapper.map(emailModel);
     }
 

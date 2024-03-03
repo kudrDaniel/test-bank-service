@@ -1,5 +1,10 @@
 package ru.duckcoder.bankservice.controller.api;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -23,7 +28,14 @@ import ru.duckcoder.bankservice.service.WalletService;
 public class WalletController {
     private final WalletService walletService;
 
+    @Operation(summary = "Returns wallet", description = "Get wallet by user id")
     @SecurityRequirement(name = "Bearer Authentication")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200",
+            description = "Wallet founded",
+            content = @Content(mediaType = "application/json",
+            schema = @Schema(name = "Wallet", implementation = WalletDTO.class)))
+    })
     @GetMapping("/{id}/wallet")
     @ResponseStatus(HttpStatus.OK)
     public WalletDTO show(@PathVariable Long id) {
