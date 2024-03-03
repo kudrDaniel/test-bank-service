@@ -69,6 +69,8 @@ public class UserService {
     @Transactional
     public UserDTO create(UserCreateDTO dto) {
         Map<String, String> violations = new HashMap<>();
+        if (userRepository.existsByUsername(dto.getUsername()))
+            violations.put(dto.getUsername(), "username");
         if (emailRepository.existsByEmail(dto.getEmail()))
             violations.put(dto.getEmail(), "email");
         if (phoneRepository.existsByPhone(dto.getPhone()))

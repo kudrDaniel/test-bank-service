@@ -13,6 +13,7 @@ import java.util.List;
 public class UserDTO {
     private Long id;
     private String fullName;
+    private String username;
     private LocalDate birthDate;
     private List<Email> emails;
     private List<Phone> phones;

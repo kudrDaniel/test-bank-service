@@ -30,6 +30,9 @@ public class User implements UserDetails, Mappable {
     @Length(min = 5, max = 128)
     private String fullName;
 
+    @Length(min = 3, max = 64)
+    private String username;
+
     @NotNull
     private LocalDate birthDate;
 
@@ -57,9 +60,7 @@ public class User implements UserDetails, Mappable {
 
     @Override
     public String getUsername() {
-        if (this.emails.isEmpty())
-            return null;
-        return this.emails.get(0).getEmail();
+        return this.username;
     }
 
     @Override

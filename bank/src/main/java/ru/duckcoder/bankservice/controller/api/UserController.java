@@ -37,15 +37,10 @@ public class UserController {
     @Operation(summary = "Returns list of users", description = "Returns users with received filter, pagination, sort")
     @SecurityRequirement(name = "Bearer Authentication")
     @ApiResponses(value = {
-            @ApiResponse(
-                    responseCode = "200",
+            @ApiResponse(responseCode = "200",
                     description = "Users list returned",
-                    content = {
-                            @Content(
-                                    mediaType = "application/json",
-                                    array = @ArraySchema(schema = @Schema(name = "User", implementation = UserDTO.class))
-                            )
-                    }
+                    content = @Content(mediaType = "application/json",
+                            array = @ArraySchema(schema = @Schema(name = "User", implementation = UserDTO.class)))
             )
     })
     @GetMapping("/")
@@ -55,21 +50,17 @@ public class UserController {
             @RequestParam(name = "size", required = false) Integer size,
             @RequestParam(name = "direction", required = false) String direction,
             @RequestParam(name = "orderBy", required = false) String[] orderBy,
-            @RequestParam(required = false) UserParamsDTO params) {
+            @RequestParam(name = "params", required = false) UserParamsDTO params) {
         return userService.findAll(page, size, orderBy, direction, params);
     }
 
     @Operation(summary = "Returns user by id", description = "Get user by id")
     @SecurityRequirement(name = "Bearer Authentication")
     @ApiResponses(value = {
-            @ApiResponse(
-                    responseCode = "200",
+            @ApiResponse(responseCode = "200",
                     description = "User found and returned",
-                    content = @Content(
-                            mediaType = "application/json",
-                            schema = @Schema(name = "User", implementation = UserDTO.class)
-                    )
-            )
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(name = "User", implementation = UserDTO.class)))
     })
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
@@ -79,14 +70,10 @@ public class UserController {
 
     @Operation(summary = "Returns created user", description = "Create user")
     @ApiResponses(value = {
-            @ApiResponse(
-                    responseCode = "201",
+            @ApiResponse(responseCode = "201",
                     description = "User is created",
-                    content = @Content(
-                            mediaType = "application/json",
-                            schema = @Schema(name = "User", implementation = UserDTO.class)
-                    )
-            )
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(name = "User", implementation = UserDTO.class)))
     })
     @PostMapping("")
     @ResponseStatus(HttpStatus.CREATED)
@@ -95,7 +82,12 @@ public class UserController {
     }
 
 
+    @Operation(summary = "No content", description = "Delete user by id")
     @SecurityRequirement(name = "Bearer Authentication")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204",
+                    description = "User deleted")
+    })
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable Long id) {

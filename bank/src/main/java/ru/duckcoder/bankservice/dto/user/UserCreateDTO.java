@@ -15,6 +15,8 @@ import java.time.LocalDate;
 public class UserCreateDTO {
     @Length(min = 5, max = 128)
     private String fullName;
+    @Length(min = 3, max = 64)
+    private String username;
     @NotNull
     private LocalDate birthDate;
     @Email
