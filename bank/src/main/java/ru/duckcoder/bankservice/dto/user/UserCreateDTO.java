@@ -1,7 +1,7 @@
 package ru.duckcoder.bankservice.dto.user;
 
-import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
@@ -29,6 +29,6 @@ public class UserCreateDTO {
     private String password;
     @NotBlank
     private String phone;
-    @DecimalMin("0.0")
-    private Double deposit;
+    @Min(0)
+    private long deposit;
 }

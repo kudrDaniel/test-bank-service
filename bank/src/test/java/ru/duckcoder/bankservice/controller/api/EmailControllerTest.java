@@ -71,7 +71,7 @@ public class EmailControllerTest {
         LocalDate birthDate = LocalDate.of(1980, 5, 20);
         String email = "testEmail@email.com";
         String phone = "912345678";
-        double deposit = 1000.0;
+        long deposit = 100000;
 
         if (userRepository.existsByUsername(username + 0) || userRepository.existsByUsername(username + 1))
             return;
@@ -91,8 +91,8 @@ public class EmailControllerTest {
         testPhone1.setPhone(phone + 1);
         testWallet0 = new Wallet();
         testWallet1 = new Wallet();
-        testWallet0.setDeposit(deposit + 0);
-        testWallet1.setDeposit(deposit + 1);
+        testWallet0.setDeposit(deposit);
+        testWallet1.setDeposit(deposit + 100);
         testUser0 = new User();
         testUser1 = new User();
         testUser0.setFullName(fullName + 0);

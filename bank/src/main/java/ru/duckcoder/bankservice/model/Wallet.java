@@ -8,7 +8,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.Min;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -25,27 +25,27 @@ public class Wallet implements Mappable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @DecimalMin("0.0")
-    private Double deposit;
+    @Min(0)
+    private long deposit;
 
-    @DecimalMin("0.0")
-    private Double accrual = 0.0;
+    @Min(0)
+    private long accrual = 0L;
 
     @JsonIgnore
     @OneToOne
     private User user;
 
-    public Double getBalance() {
+    public long getBalance() {
         return this.deposit + this.accrual;
     }
 
     public void changeAccrual() {
-        if (this.getBalance() * 1.05 <= this.deposit * 2.07) {
-            this.accrual += this.getBalance() * 0.05;
+        if (Math.round(this.getBalance() * 1.05) <= Math.round(this.deposit * 2.07)) {
+            this.accrual += Math.round(this.getBalance() * 0.05);
         }
     }
 
-    public boolean removeFromDeposit(Double count) {
+    public boolean removeFromDeposit(long count) {
         if (this.deposit >= count) {
             this.deposit -= count;
             return true;
@@ -53,7 +53,7 @@ public class Wallet implements Mappable {
         return false;
     }
 
-    public void addToDeposit(Double count) {
+    public void addToDeposit(long count) {
         this.deposit += count;
     }
 

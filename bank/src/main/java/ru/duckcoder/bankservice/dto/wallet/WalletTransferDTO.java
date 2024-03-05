@@ -1,6 +1,6 @@
 package ru.duckcoder.bankservice.dto.wallet;
 
-import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.Min;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -8,6 +8,6 @@ import lombok.Setter;
 @Setter
 public class WalletTransferDTO {
     private Long receiverId;
-    @DecimalMin("0.0")
-    private Double count;
+    @Min(0)
+    private Long count;
 }

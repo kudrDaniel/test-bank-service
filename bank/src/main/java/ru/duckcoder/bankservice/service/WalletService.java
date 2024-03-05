@@ -24,6 +24,7 @@ public class WalletService {
     private final WalletMapper mapper;
     private final UserUtils userUtils;
 
+    @Transactional
     public WalletDTO findByUserId(Long id) {
         if (!Objects.equals(userUtils.getCurrentUser().getId(), id))
             throw new AccessDeniedException("Access denied for seeing from another user");
@@ -49,16 +50,12 @@ public class WalletService {
     }
 
     @Scheduled(fixedDelay = 60000L)
+    @Transactional
     public void updateAccrual() {
         List<Wallet> walletModels = walletRepository.findAll();
         for (Wallet walletModel : walletModels) {
-            accrualTransaction(walletModel);
+            walletModel.changeAccrual();
         }
-    }
-
-    @Transactional
-    public void accrualTransaction(Wallet model) {
-        model.changeAccrual();
-        walletRepository.save(model);
+        walletRepository.saveAll(walletModels);
     }
 }

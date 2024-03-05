@@ -29,7 +29,6 @@ import ru.duckcoder.bankservice.repository.WalletRepository;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
 
@@ -70,7 +69,7 @@ public class WalletControllerTest {
         LocalDate birthDate = LocalDate.of(1980, 5, 20);
         String email = "testEmail@email.com";
         String phone = "912345678";
-        double deposit = 1000.0;
+        long deposit = 100000;
 
         if (userRepository.existsByUsername(username + 0) || userRepository.existsByUsername(username + 1))
             return;
@@ -90,8 +89,8 @@ public class WalletControllerTest {
         testPhone1.setPhone(phone + 1);
         testWallet0 = new Wallet();
         testWallet1 = new Wallet();
-        testWallet0.setDeposit(deposit + 0);
-        testWallet1.setDeposit(deposit + 1);
+        testWallet0.setDeposit(deposit);
+        testWallet1.setDeposit(deposit + 100);
         testUser0 = new User();
         testUser1 = new User();
         testUser0.setFullName(fullName + 0);
@@ -136,11 +135,11 @@ public class WalletControllerTest {
     @Test
     public void walletTransferTestSuccess() throws Exception {
         WalletTransferDTO dto = new WalletTransferDTO();
-        dto.setCount(100.0);
+        dto.setCount(10000L);
         dto.setReceiverId(testUser1.getId());
 
-        double oldSenderDeposit = testWallet0.getDeposit();
-        double oldReceiverDeposit = testWallet1.getDeposit();
+        long oldSenderDeposit = testWallet0.getDeposit();
+        long oldReceiverDeposit = testWallet1.getDeposit();
 
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders.put("/api/users/{id}/transfer", testUser0.getId())
                 .with(token0)
@@ -151,22 +150,22 @@ public class WalletControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andReturn();
 
-        Wallet senderModel = walletRepository.findByUserId(testUser0.getId()).orElseThrow();
+        Wallet senderModel = walletRepository.findById(testWallet0.getId()).orElseThrow();
         JsonAssertions.assertThatJson(result.getResponse().getContentAsString()).and(
                 v -> v.node("deposit").isEqualTo(senderModel.getDeposit()).isEqualTo(oldSenderDeposit - dto.getCount())
         );
-        Wallet receiverModel = walletRepository.findByUserId(testUser1.getId()).orElseThrow();
+        Wallet receiverModel = walletRepository.findById(testWallet1.getId()).orElseThrow();
         Assertions.assertThat(receiverModel.getDeposit()).isEqualTo(oldReceiverDeposit + dto.getCount());
     }
 
     @Test
     public void walletTransferTestWrongUser() throws Exception {
         WalletTransferDTO dto = new WalletTransferDTO();
-        dto.setCount(100.0);
+        dto.setCount(10000L);
         dto.setReceiverId(testUser1.getId());
 
-        double oldSenderDeposit = testWallet0.getDeposit();
-        double oldReceiverDeposit = testWallet1.getDeposit();
+        long oldSenderDeposit = testWallet0.getDeposit();
+        long oldReceiverDeposit = testWallet1.getDeposit();
 
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders.put("/api/users/{id}/transfer", testUser0.getId())
                 .with(token1)
@@ -176,20 +175,20 @@ public class WalletControllerTest {
         mockMvc.perform(request)
                 .andExpect(MockMvcResultMatchers.status().isUnauthorized());
 
-        Wallet senderModel = walletRepository.findByUserId(testUser0.getId()).orElseThrow();
+        Wallet senderModel = walletRepository.findById(testWallet0.getId()).orElseThrow();
         Assertions.assertThat(senderModel.getDeposit()).isEqualTo(oldSenderDeposit);
-        Wallet receiverModel = walletRepository.findByUserId(testUser1.getId()).orElseThrow();
+        Wallet receiverModel = walletRepository.findById(testWallet1.getId()).orElseThrow();
         Assertions.assertThat(receiverModel.getDeposit()).isEqualTo(oldReceiverDeposit);
     }
 
     @Test
     public void walletTransferTestNotEnoughMoney() throws Exception {
         WalletTransferDTO dto = new WalletTransferDTO();
-        dto.setCount(10000.0);
+        dto.setCount(100100L);
         dto.setReceiverId(testUser1.getId());
 
-        double oldSenderDeposit = testWallet0.getDeposit();
-        double oldReceiverDeposit = testWallet1.getDeposit();
+        long oldSenderDeposit = testWallet0.getDeposit();
+        long oldReceiverDeposit = testWallet1.getDeposit();
 
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders.put("/api/users/{id}/transfer", testUser0.getId())
                 .with(token0)
@@ -199,9 +198,9 @@ public class WalletControllerTest {
         mockMvc.perform(request)
                 .andExpect(MockMvcResultMatchers.status().isConflict());
 
-        Wallet senderModel = walletRepository.findByUserId(testUser0.getId()).orElseThrow();
+        Wallet senderModel = walletRepository.findById(testWallet0.getId()).orElseThrow();
         Assertions.assertThat(senderModel.getDeposit()).isEqualTo(oldSenderDeposit);
-        Wallet receiverModel = walletRepository.findByUserId(testUser1.getId()).orElseThrow();
+        Wallet receiverModel = walletRepository.findById(testWallet1.getId()).orElseThrow();
         Assertions.assertThat(receiverModel.getDeposit()).isEqualTo(oldReceiverDeposit);
     }
 }

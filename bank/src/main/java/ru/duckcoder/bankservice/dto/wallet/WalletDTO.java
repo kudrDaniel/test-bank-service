@@ -6,6 +6,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class WalletDTO {
-    private Double deposit;
-    private Double accrual;
+    private Long deposit;
+    private Long accrual;
 }

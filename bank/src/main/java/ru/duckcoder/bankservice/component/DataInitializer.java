@@ -36,12 +36,12 @@ public class DataInitializer implements ApplicationRunner {
                     LocalDate.of(1980, 1, 1 + i),
                     "testUser" + i + "@example.com",
                     "987654321" + i,
-                    (1 + i) * 100.0
+                    (1 + i) * 10000
             );
         }
     }
 
-    private void createUser(String fullName, String username, String password, LocalDate birthDate, String email, String phone, Double deposit) {
+    private void createUser(String fullName, String username, String password, LocalDate birthDate, String email, String phone, long deposit) {
         if (userRepository.existsByUsername(username))
             return;
         Email defaultEmail = new Email();
